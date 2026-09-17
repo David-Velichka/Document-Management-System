@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Paperless REST API
+  description: RESTful API for Paperless Document Management System (SWEN3 Semester Project)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8081
+    description: Direct Backend REST Server
+  - url: http://localhost:80/api
+    description: Via Nginx Reverse Proxy
+
+paths:
+  /api/documents:
+    get:
+      summary: Retrieve all documents
+      operationId: getAllDocuments
+      responses:
+        '200':
+          description: List of documents successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentDto'
+    post:
+      summary: Create new document metadata
+      operationId: createDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentDto'
+      responses:
+        '201':
+          description: Document successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+
+  /api/documents/{id}:
+    get:
+      summary: Retrieve document by ID
+      operationId: getDocumentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '404':
+          description: Document not found
+    delete:
+      summary: Delete document by ID
+      operationId: deleteDocument
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Document deleted
+
+  /api/documents/search:
+    get:
+      summary: Full-text search for documents
+      operationId: searchDocuments
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentDto'
+
+  /api/custom-entities:
+    get:
+      summary: Retrieve all custom entities (individual use case)
+      operationId: getAllCustomEntities
+      responses:
+        '200':
+          description: List of custom entities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomEntityDto'
+    post:
+      summary: Create custom entity
+      operationId: createCustomEntity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomEntityDto'
+      responses:
+        '201':
+          description: Custom entity created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEntityDto'
+
+components:
+  schemas:
+    DocumentDto:
+      type: object
+      required:
+        - title
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        originalFilename:
+          type: string
+        contentType:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+        storagePath:
+          type: string
+        ocrText:
+          type: string
+        summary:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        modifiedAt:
+          type: string
+          format: date-time
+
+    CustomEntityDto:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        documentId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time

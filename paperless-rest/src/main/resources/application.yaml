@@ -1,3 +1,44 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: paperless-rest
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/paperless}
+    username: ${SPRING_DATASOURCE_USERNAME:paperless_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:paperless_secure_pass}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:paperless}
+    password: ${SPRING_RABBITMQ_PASSWORD:paperless_secret}
+
+  flyway:
+    enabled: false
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:paperless_minio}
+  secret-key: ${MINIO_ROOT_PASSWORD:paperless_minio_secret}
+  bucket-name: paperless-documents
+
+elasticsearch:
+  uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+
+logging:
+  level:
+    com.paperless.rest: DEBUG
+    org.springframework.web: INFO
